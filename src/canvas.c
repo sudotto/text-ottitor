@@ -67,7 +67,7 @@ void fill_canvas(canvas* canv, char c, bool inv){
 }
 
 void print_canvas(canvas* canv, char* str, bool inv, int x, int y){
-	for(int i = 0; i < strlen("test"); i++){
+	for(int i = 0; i < strlen(str); i++){
 		write_canvas(canv, str[i], inv, x, y);
 		x++;
 	}

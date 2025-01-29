@@ -1,1 +1,1 @@
-gcc main.c canvas.c -o app
+gcc main.c canvas.c app.c -o app
