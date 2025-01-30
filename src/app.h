@@ -22,6 +22,7 @@ typedef struct {
 } session;
 
 session create_session(char* filename);
+void update_session(session* sesh, char* key);
 void render_session(session* sesh, canvas* canv);
 
 #endif

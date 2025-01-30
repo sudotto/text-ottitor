@@ -24,12 +24,14 @@ session create_session(char* filename){
 			inst.line_count = i;
 			break;
 		}
-		inst.lines[i][strcspn(inst.lines[i], "\n")] = '\0';
 	}
 	inst.cursor_x = 0;
 	inst.cursor_y = 0;
 	fclose(file_ptr);
 	return inst;
+}
+
+void update_session(session* sesh, char* key){
 }
 
 void render_session(session* sesh, canvas* canv){
@@ -38,5 +40,6 @@ void render_session(session* sesh, canvas* canv){
 	//  you might have forgotten to increment sesh.line_count elsewhere
 	for(int i = 0; i < sesh->line_count; i++){
 		print_canvas(canv, sesh->lines[i], false, 0, i + 1);
+		write_canvas(canv, sesh->lines[sesh->cursor_y][sesh->cursor_x], true, sesh->cursor_x, sesh->cursor_y + 1);
 	}
 }

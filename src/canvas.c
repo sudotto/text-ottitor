@@ -24,7 +24,17 @@ void get_term_size(int* w, int* h){
 
 glyph create_glyph(char c, bool inv){
 	glyph inst;
-	inst.c = c;
+	switch(c){
+		case '\n': // NEWLINE
+			inst.c = ' ';
+			break;
+		case 9: // TAB
+			inst.c = ' ';
+			break;
+		default:
+			inst.c = c;
+			break;
+	}
 	inst.inv = inv;
 	return inst;
 }
@@ -37,8 +47,8 @@ canvas create_canvas(){
 	canvas inst;
 	int w, h;
 	get_term_size(&w, &h);
-	inst.w = w - 5;
-	inst.h = h - 5;
+	inst.w = w - 4;
+	inst.h = h - 3;
 	for(int y = 0; y <= h; y++){
 		for(int x = 0; x <= w; x++){
 			inst.glyphs[y][x] = create_glyph(' ', false);
@@ -49,8 +59,7 @@ canvas create_canvas(){
 
 void write_canvas(canvas* canv, char c, bool inv, int x, int y){
 	if(x >= 0 && x <= canv->w && y >= 0 && y <= canv->h){
-		canv->glyphs[y][x].c = c;
-		canv->glyphs[y][x].inv = inv;
+		canv->glyphs[y][x] = create_glyph(c, inv);
 	}
 }
 

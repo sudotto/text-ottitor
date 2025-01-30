@@ -7,7 +7,7 @@
 #include "canvas.h"
 #include "app.h"
 
-char get_key(char* key) {
+void get_key(char* key) {
 	struct termios old_term, new_term;
 	tcgetattr(STDIN_FILENO, &old_term);
 	new_term = old_term;
@@ -34,11 +34,19 @@ int main(int argc, char** argv){
 		printf("\033[31m[ERROR] %s isn't a real file dipshit\033[0m\n", argv[1]);
 		return 1;
 	}
-	while(key != 'q' && key != 'Q'){
+	bool running = true;
+	while(running){
 		system("clear");
 		fill_canvas(&canv, '-', false);
 		topbar(&canv, sesh);
-		
+
+		switch(key){
+			case 27:
+				running = false;
+				break;
+		}
+
+		update_session(&sesh, &key);
 		render_session(&sesh, &canv);
 
 		render_canvas(&canv);
