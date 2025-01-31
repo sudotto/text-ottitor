@@ -18,9 +18,9 @@ session create_session(char* filename){
 	}
 	FILE* file_ptr = fopen(filename, "r");
 	inst.name = filename;
-	for(int i = 0; i < 200; i++){
-		inst.lines[i] = malloc(200);
-		if(!fgets(inst.lines[i], 200, file_ptr)){
+	for(int i = 0; i < 500; i++){
+		inst.lines[i] = malloc(500);
+		if(!fgets(inst.lines[i], 500, file_ptr)){
 			inst.line_count = i;
 			break;
 		}
@@ -31,7 +31,54 @@ session create_session(char* filename){
 	return inst;
 }
 
+void save_file(session* sesh){
+	FILE* file_ptr = fopen(sesh->name, "w");
+	fprintf(file_ptr, "");
+	char* contents = malloc(500);
+	for(int i = 0; i < 500; i++){
+		if(sesh->lines[i]){
+			strcat(contents, sesh->lines[i]);
+			strcat(contents, "\n");
+		}
+	}
+	fprintf(file_ptr, contents);
+	fclose(file_ptr);
+}
+
 void update_session(session* sesh, char* key){
+	switch(*key){
+		case 'w':
+			sesh->cursor_y -= 1;
+			break;
+		case 'a':
+			sesh->cursor_x -= 1;
+			break;
+		case 's':
+			sesh->cursor_y += 1;
+			break;
+		case 'd':
+			sesh->cursor_x += 1;
+			break;
+		case 'k':
+			cycle_session_char(sesh, sesh->cursor_x, sesh->cursor_y, 1);
+			break;
+		case 'l':
+			cycle_session_char(sesh, sesh->cursor_x, sesh->cursor_y, -1);
+			break;
+		case 'j':
+			sesh->lines[sesh->cursor_y][sesh->cursor_x] = ' ';
+			break;
+	}
+}
+
+void cycle_session_char(session* sesh, int x, int y, int amount){
+	sesh->lines[y][x] += amount;
+	if(sesh->lines[y][x] > 126){
+		sesh->lines[y][x] = 33 + (sesh->lines[y][x] - 126);
+	}
+	if(sesh->lines[y][x] < 33){
+		sesh->lines[y][x] = 126 - (sesh->lines[y][x] + 33);
+	}
 }
 
 void render_session(session* sesh, canvas* canv){

@@ -37,20 +37,27 @@ int main(int argc, char** argv){
 	bool running = true;
 	while(running){
 		system("clear");
-		fill_canvas(&canv, '-', false);
+		//fill_canvas(&canv, '-', false);
 		topbar(&canv, sesh);
-
-		switch(key){
-			case 27:
-				running = false;
-				break;
-		}
-
 		update_session(&sesh, &key);
 		render_session(&sesh, &canv);
-
 		render_canvas(&canv);
+
 		get_key(&key);
+		switch(key){
+			case 'q':
+				running = false;
+				system("clear");
+				printf("\033[34m[INFO] closed without saving hahaha\033[0m\n");
+				break;
+			case 'f':
+				save_file(&sesh);
+				running = false;
+				system("clear");
+				printf("\033[34m[INFO] closed and saved\033[0m\n");
+				break;
+		}
 	}
+
 	return 0;
 }
