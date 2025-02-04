@@ -18,10 +18,10 @@ session create_session(char* filename){
 	}
 	FILE* file_ptr = fopen(filename, "r");
 	inst.name = filename;
-	for(int i = 0; i < 500; i++){
-		inst.lines[i] = malloc(500);
-		if(!fgets(inst.lines[i], 500, file_ptr)){
-			inst.line_count = i;
+	for(int y = 0; y < 500; y++){
+		inst.lines[y] = malloc(500);
+		if(!fgets(inst.lines[y], 500, file_ptr)){
+			inst.line_count = y;
 			break;
 		}
 	}
@@ -45,19 +45,32 @@ void save_file(session* sesh){
 	fclose(file_ptr);
 }
 
+void move_session_cursor(session* sesh, int x, int y){
+	sesh->cursor_x += x;
+	sesh->cursor_y += y;
+	if(sesh->cursor_x < 0 || sesh->cursor_y < 0 || sesh->cursor_x >= 500 || sesh->cursor_y >= sesh->line_count){
+		sesh->cursor_x -= x;
+		sesh->cursor_y -= y;
+	}
+	if(!sesh->lines[sesh->cursor_y][sesh->cursor_x]){
+		printf("NULL NULL ITS NULL ITS NULL");
+		sesh->lines[sesh->cursor_y][sesh->cursor_x] = ' ';
+	}
+}
+
 void update_session(session* sesh, char* key){
 	switch(*key){
 		case 'w':
-			sesh->cursor_y -= 1;
+			move_session_cursor(sesh, 0, -1);
 			break;
 		case 'a':
-			sesh->cursor_x -= 1;
+			move_session_cursor(sesh, -1, 0);
 			break;
 		case 's':
-			sesh->cursor_y += 1;
+			move_session_cursor(sesh, 0, 1);
 			break;
 		case 'd':
-			sesh->cursor_x += 1;
+			move_session_cursor(sesh, 1, 0);
 			break;
 		case 'k':
 			cycle_session_char(sesh, sesh->cursor_x, sesh->cursor_y, 1);
@@ -81,12 +94,15 @@ void cycle_session_char(session* sesh, int x, int y, int amount){
 	}
 }
 
-void render_session(session* sesh, canvas* canv){
+void render_session(session* sesh, canvas* canv, int x, int y){
 	// Dear future me:
 	//    if you're trying to figure out why the file keeps getting cut off even when below 500 lines,
 	//  you might have forgotten to increment sesh.line_count elsewhere
+	char* line_num;
 	for(int i = 0; i < sesh->line_count; i++){
-		print_canvas(canv, sesh->lines[i], false, 0, i + 1);
-		write_canvas(canv, sesh->lines[sesh->cursor_y][sesh->cursor_x], true, sesh->cursor_x, sesh->cursor_y + 1);
+		sprintf(line_num, "%i", i + 1);
+		print_canvas(canv, line_num, false, x, i + y);
+		print_canvas(canv, sesh->lines[i], false, x + 3, i + y);
+		write_canvas(canv, sesh->lines[sesh->cursor_y][sesh->cursor_x], true, (sesh->cursor_x + x) + 3, sesh->cursor_y + y);
 	}
 }
