@@ -21,6 +21,12 @@ session create_session(char* filename){
 	for(int y = 0; y < 500; y++){
 		inst.lines[y] = malloc(500);
 		if(!fgets(inst.lines[y], 500, file_ptr)){
+			for(int x = 0; x < 500; x++){
+				if(inst.lines[y][x] == '\n'){
+					inst.lines[y][x] = ' ';
+					break;
+				}
+			}
 			inst.line_count = y;
 			break;
 		}
@@ -38,6 +44,7 @@ void save_file(session* sesh){
 	for(int i = 0; i < 500; i++){
 		if(sesh->lines[i]){
 			strcat(contents, sesh->lines[i]);
+			strcat(contents, '\n');
 		}
 	}
 	fprintf(file_ptr, contents);
