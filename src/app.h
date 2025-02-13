@@ -24,7 +24,7 @@ typedef struct {
 session create_session(char* filename);
 void save_file(session* sesh);
 void update_session(session* sesh, char* key);
-void cycle_session_char(session* sesh, int x, int y, int amount);
+void cycle_session_char(session* sesh, int x, int y);
 void render_session(session* sesh, canvas* canv, int x, int y);
 
 #endif

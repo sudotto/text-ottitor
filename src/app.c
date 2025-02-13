@@ -38,7 +38,6 @@ void save_file(session* sesh){
 	for(int i = 0; i < 500; i++){
 		if(sesh->lines[i]){
 			strcat(contents, sesh->lines[i]);
-			strcat(contents, "\n");
 		}
 	}
 	fprintf(file_ptr, contents);
@@ -48,13 +47,23 @@ void save_file(session* sesh){
 void move_session_cursor(session* sesh, int x, int y){
 	sesh->cursor_x += x;
 	sesh->cursor_y += y;
-	if(sesh->cursor_x < 0 || sesh->cursor_y < 0 || sesh->cursor_x >= 500 || sesh->cursor_y >= sesh->line_count){
+	if(sesh->cursor_x < 0 || sesh->cursor_y < 0 || sesh->cursor_x >= 500 || sesh->cursor_y >= 500){
 		sesh->cursor_x -= x;
 		sesh->cursor_y -= y;
 	}
-	if(!sesh->lines[sesh->cursor_y][sesh->cursor_x]){
-		printf("NULL NULL ITS NULL ITS NULL");
-		sesh->lines[sesh->cursor_y][sesh->cursor_x] = ' ';
+	if(x){
+		if(!sesh->lines[sesh->cursor_y][sesh->cursor_x]){
+			sesh->lines[sesh->cursor_y][sesh->cursor_x] = ' ';
+		}
+	}
+	if(y){
+		if(sesh->cursor_y >= sesh->line_count){
+			sesh->line_count++;
+			sesh->lines[sesh->cursor_y][sesh->cursor_x] = ' ';
+		}
+		while(!sesh->lines[sesh->cursor_y][sesh->cursor_x]){
+			sesh->cursor_x--;
+		}
 	}
 }
 
@@ -73,10 +82,10 @@ void update_session(session* sesh, char* key){
 			move_session_cursor(sesh, 1, 0);
 			break;
 		case 'k':
-			cycle_session_char(sesh, sesh->cursor_x, sesh->cursor_y, 1);
+			cycle_session_char(sesh, sesh->cursor_x, sesh->cursor_y);
 			break;
 		case 'l':
-			cycle_session_char(sesh, sesh->cursor_x, sesh->cursor_y, -1);
+			cycle_session_char(sesh, sesh->cursor_x, sesh->cursor_y);
 			break;
 		case 'j':
 			sesh->lines[sesh->cursor_y][sesh->cursor_x] = ' ';
@@ -84,13 +93,13 @@ void update_session(session* sesh, char* key){
 	}
 }
 
-void cycle_session_char(session* sesh, int x, int y, int amount){
-	sesh->lines[y][x] += amount;
+void cycle_session_char(session* sesh, int x, int y){
+	sesh->lines[y][x]++;
 	if(sesh->lines[y][x] > 126){
-		sesh->lines[y][x] = 33 + (sesh->lines[y][x] - 126);
+		sesh->lines[y][x] = 33;
 	}
 	if(sesh->lines[y][x] < 33){
-		sesh->lines[y][x] = 126 - (sesh->lines[y][x] + 33);
+		sesh->lines[y][x] = 126;
 	}
 }
 

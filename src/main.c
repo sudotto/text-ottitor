@@ -45,7 +45,7 @@ int main(int argc, char** argv){
 		system("clear");
 		switch(state){
 			case EDIT:
-				fill_canvas(&canv, '-', false);
+				//fill_canvas(&canv, '-', false);
 				topbar(&canv, sesh.name);
 				update_session(&sesh, &key);
 				render_session(&sesh, &canv, 0, 1);
