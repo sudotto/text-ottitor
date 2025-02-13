@@ -53,7 +53,7 @@ void save_file(session* sesh){
 
 void move_session_cursor(session* sesh, int x, int y){
 	sesh->cursor_x += x;
-	sesh->cursor_y += y;
+	sesh->cursor_y += y;inst.lines[y][x]
 	if(sesh->cursor_x < 0 || sesh->cursor_y < 0 || sesh->cursor_x >= 500 || sesh->cursor_y >= 500){
 		sesh->cursor_x -= x;
 		sesh->cursor_y -= y;
