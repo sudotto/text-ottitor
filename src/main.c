@@ -1,19 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
 
 #include "canvas.h"
 #include "app.h"
 
-void get_key(char* key) {
+void get_key(char* key){
 	struct termios old_term, new_term;
 	tcgetattr(STDIN_FILENO, &old_term);
 	new_term = old_term;
 	new_term.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
 	*key = getchar();
+	tcsetattr(STDIN_FILENO, TCSANOW, &old_term);
+}
+
+void get_thermo_input(char* key){
+	struct termios old_term, new_term;
+	tcgetattr(STDIN_FILENO, &old_term);
+	new_term = old_term;
+	new_term.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
+	system("sudo chmod a+rw /dev/ttyACM0");
+	system("sudo udevadm trigger");
+	int buffer = open("/dev/ttyACM0", O_RDONLY);
+	read(buffer, key, 1);
+	close(buffer);
 	tcsetattr(STDIN_FILENO, TCSANOW, &old_term);
 }
 
@@ -40,6 +56,12 @@ int main(int argc, char** argv){
 		return 1;
 	}
 	app_state state = EDIT;
+	bool thermo = false;
+	if(argv[2]){
+		if(!strcmp(argv[2], "+thermostat")){
+			thermo = true;
+		}
+	}
 	bool running = true;
 	while(running){
 		system("clear");
@@ -51,7 +73,11 @@ int main(int argc, char** argv){
 				render_session(&sesh, &canv, 0, 1);
 				render_canvas(&canv);
 
-				get_key(&key);
+				if(thermo){
+					get_thermo_input(&key);
+				} else {
+					get_key(&key);
+				}
 				switch(key){
 					case 'q':
 						running = false;

@@ -44,7 +44,7 @@ void save_file(session* sesh){
 	for(int i = 0; i < 500; i++){
 		if(sesh->lines[i]){
 			strcat(contents, sesh->lines[i]);
-			strcat(contents, '\n');
+			strcat(contents, "\n");
 		}
 	}
 	fprintf(file_ptr, contents);
@@ -53,7 +53,7 @@ void save_file(session* sesh){
 
 void move_session_cursor(session* sesh, int x, int y){
 	sesh->cursor_x += x;
-	sesh->cursor_y += y;inst.lines[y][x]
+	sesh->cursor_y += y;
 	if(sesh->cursor_x < 0 || sesh->cursor_y < 0 || sesh->cursor_x >= 500 || sesh->cursor_y >= 500){
 		sesh->cursor_x -= x;
 		sesh->cursor_y -= y;
